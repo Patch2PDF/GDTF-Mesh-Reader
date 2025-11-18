@@ -3,8 +3,8 @@ package Primitives
 import (
 	"embed"
 
-	FileHandlers "github.com/Patch2PDF/GDTF-Mesh-Reader/file_handlers"
-	Types "github.com/Patch2PDF/GDTF-Mesh-Reader/types"
+	Types "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+	FileHandlers "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/file_handlers"
 )
 
 //go:embed assets/1.0/*.3ds
