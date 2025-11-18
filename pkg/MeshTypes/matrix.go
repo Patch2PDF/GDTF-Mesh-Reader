@@ -1,4 +1,4 @@
-package Types
+package MeshTypes
 
 type Matrix struct {
 	X00, X01, X02, X03 float64

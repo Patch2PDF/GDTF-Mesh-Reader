@@ -1,4 +1,4 @@
-package Types
+package MeshTypes
 
 type Triangle struct {
 	V0 *Vertex

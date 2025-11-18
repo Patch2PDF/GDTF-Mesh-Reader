@@ -1,4 +1,4 @@
-package Types
+package MeshTypes
 
 import "math"
 
