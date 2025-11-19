@@ -29,6 +29,7 @@ import (
 	MeshTypes "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
 )
 
+// Reads content of a '.3ds' file and outputs the mesh it contains
 func Load3DS(fileData *[]byte, desiredSize *MeshTypes.Vector) (*MeshTypes.Mesh, error) {
 	type ChunkHeader struct {
 		ChunkID uint16

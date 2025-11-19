@@ -1,13 +1,16 @@
 package MeshTypes
 
+// Datatype for Model Meshes
 type Mesh struct {
 	Triangles []*Triangle
 }
 
+// add Triangle to Mesh
 func (obj *Mesh) AddTriangle(triangle *Triangle) {
 	obj.Triangles = append(obj.Triangles, triangle)
 }
 
+// create a deep copy of Mesh object
 func (obj *Mesh) Copy() Mesh {
 	triangles := make([]*Triangle, len(obj.Triangles))
 	for index, triangle := range obj.Triangles {
@@ -17,11 +20,13 @@ func (obj *Mesh) Copy() Mesh {
 	return Mesh{Triangles: triangles}
 }
 
+// add contents from Mesh to this mesh, additionally returns the mesh pointer
 func (obj *Mesh) Add(mesh *Mesh) *Mesh {
 	obj.Triangles = append(obj.Triangles, mesh.Triangles...)
 	return obj
 }
 
+// rotate and translate an entire mesh object
 func (obj *Mesh) RotateAndTranslate(translationMatrix Matrix) {
 	for _, triangle := range obj.Triangles {
 		triangle.V0.Position = translationMatrix.MulPosition(triangle.V0.Position)
@@ -30,7 +35,8 @@ func (obj *Mesh) RotateAndTranslate(translationMatrix Matrix) {
 	}
 }
 
-func (obj *Mesh) calculateBoundingBox() Vector {
+// calculate Mesh dimension
+func (obj *Mesh) calculateDimension() Vector {
 	min := Vector{}
 	max := Vector{}
 	for _, triangle := range obj.Triangles {
@@ -50,8 +56,9 @@ func (obj *Mesh) calculateBoundingBox() Vector {
 	}
 }
 
+// Scale mesh to desired size
 func (obj *Mesh) ScaleToDimensions(desiredSize *Vector) {
-	actual := obj.calculateBoundingBox()
+	actual := obj.calculateDimension()
 	scaling := desiredSize.Div(actual)
 	scaledVectors := make(map[*Vertex]struct{})
 	for _, triangle := range obj.Triangles {

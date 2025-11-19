@@ -10,7 +10,8 @@ import (
 	"github.com/qmuntal/gltf"
 )
 
-func LoadGLTF(file io.ReadCloser, desiredSize Types.Vector) ([]*Types.Mesh, error) {
+// Reads content of a '.gltf' or '.glb' file and outputs the mesh it contains
+func LoadGLTF(file io.Reader, desiredSize Types.Vector) ([]*Types.Mesh, error) {
 	var doc gltf.Document
 	gltf.NewDecoder(file).Decode(&doc)
 

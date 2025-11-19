@@ -1,5 +1,6 @@
 package MeshTypes
 
+// Datatype for a translation Matrix
 type Matrix struct {
 	X00, X01, X02, X03 float64
 	X10, X11, X12, X13 float64
@@ -7,6 +8,7 @@ type Matrix struct {
 	X30, X31, X32, X33 float64
 }
 
+// Create an identity matrix
 func IdentityMatrix() Matrix {
 	return Matrix{
 		1, 0, 0, 0,
@@ -16,6 +18,7 @@ func IdentityMatrix() Matrix {
 	}
 }
 
+// Multiply with matrice b, returns multiplied matrix
 func (a Matrix) Mul(b Matrix) Matrix {
 	m := Matrix{}
 	m.X00 = a.X00*b.X00 + a.X01*b.X10 + a.X02*b.X20 + a.X03*b.X30
@@ -37,6 +40,7 @@ func (a Matrix) Mul(b Matrix) Matrix {
 	return m
 }
 
+// Multiply Matrix with position vector, returns translated position vector
 func (a Matrix) MulPosition(b Vector) Vector {
 	x := a.X00*b.X + a.X01*b.Y + a.X02*b.Z + a.X03
 	y := a.X10*b.X + a.X11*b.Y + a.X12*b.Z + a.X13

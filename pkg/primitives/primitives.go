@@ -7,10 +7,15 @@ import (
 	FileHandlers "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/file_handlers"
 )
 
+// embedded primitives
+//
 //go:embed assets/1.0/*.3ds
 //go:embed assets/1.1/*.3ds
 var modelFS embed.FS
 
+// TODO: add primitives for Cube, Cylinder and Sphere, possibly Pigtail (just a scaled cube?)
+
+// paths to embedded primitives
 var primitivePaths = map[string]string{
 	"Cube":            "",
 	"Cylinder":        "",
@@ -26,8 +31,12 @@ var primitivePaths = map[string]string{
 	"Conventional1_1": "assets/1.1/primitivetype_conventional_1.1.3ds",
 }
 
+// Map of GDTF Primitive meshes.
+// Requries LoadPrimitives() to be executed before accessing
 var Primitives = map[string]*Types.Mesh{}
 
+// Load GDTF Primitive meshes into Primitives Map.
+// Required to be run on app startup, before accessing Primitives Map
 func LoadPrimitives() error {
 	for primitiveType, path := range primitivePaths {
 		if path == "" {
