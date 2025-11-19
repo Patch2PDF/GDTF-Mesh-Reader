@@ -53,19 +53,19 @@ func (obj *Mesh) calculateBoundingBox() Vector {
 func (obj *Mesh) ScaleToDimensions(desiredSize *Vector) {
 	actual := obj.calculateBoundingBox()
 	scaling := desiredSize.Div(actual)
-	scaledVectors := make(map[*Vertex]bool)
+	scaledVectors := make(map[*Vertex]struct{})
 	for _, triangle := range obj.Triangles {
-		if !scaledVectors[triangle.V0] {
+		if _, exists := scaledVectors[triangle.V0]; !exists {
 			triangle.V0.Position = triangle.V0.Position.Mult(scaling)
-			scaledVectors[triangle.V0] = true
+			scaledVectors[triangle.V0] = struct{}{}
 		}
-		if !scaledVectors[triangle.V1] {
+		if _, exists := scaledVectors[triangle.V1]; !exists {
 			triangle.V1.Position = triangle.V1.Position.Mult(scaling)
-			scaledVectors[triangle.V1] = true
+			scaledVectors[triangle.V1] = struct{}{}
 		}
-		if !scaledVectors[triangle.V2] {
+		if _, exists := scaledVectors[triangle.V2]; !exists {
 			triangle.V2.Position = triangle.V2.Position.Mult(scaling)
-			scaledVectors[triangle.V2] = true
+			scaledVectors[triangle.V2] = struct{}{}
 		}
 	}
 }
