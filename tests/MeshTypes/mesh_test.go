@@ -116,6 +116,95 @@ func TestScaleToDimensions(t *testing.T) {
 		},
 	}
 	if !reflect.DeepEqual(result, want) {
-		t.Errorf("Mesh RotateAndTranslate() Output does not match expected")
+		t.Errorf("Mesh ScaleToDimensions() Output does not match expected")
+	}
+}
+
+func TestScaleToDimensionsEmptyMesh(t *testing.T) {
+	a := MeshTypes.Mesh{
+		Triangles: []*MeshTypes.Triangle{},
+	}
+	desiredSize := MeshTypes.Vector{
+		X: 4, Y: 4, Z: 8,
+	}
+	err := a.ScaleToDimensions(&desiredSize)
+	if err == nil {
+		t.Errorf("Mesh ScaleToDimensions() did not return error on faulty mesh")
+	}
+}
+
+func TestScaleToDimensionsNullTriangle(t *testing.T) {
+	a := MeshTypes.Mesh{
+		Triangles: []*MeshTypes.Triangle{nil},
+	}
+	desiredSize := MeshTypes.Vector{
+		X: 4, Y: 4, Z: 8,
+	}
+	err := a.ScaleToDimensions(&desiredSize)
+	if err == nil {
+		t.Errorf("Mesh ScaleToDimensions() did not return error on faulty mesh")
+	}
+}
+
+func TestScaleToDimensionsNullVertex(t *testing.T) {
+	a := MeshTypes.Mesh{
+		Triangles: []*MeshTypes.Triangle{
+			{
+				V0: nil,
+				V1: nil,
+				V2: nil,
+			},
+		},
+	}
+	desiredSize := MeshTypes.Vector{
+		X: 4, Y: 4, Z: 8,
+	}
+	err := a.ScaleToDimensions(&desiredSize)
+	if err == nil {
+		t.Errorf("Mesh ScaleToDimensions() did not return error on faulty mesh")
+	}
+}
+
+func TestScaleToDimensions0Size(t *testing.T) {
+	a := MeshTypes.Mesh{
+		Triangles: []*MeshTypes.Triangle{
+			{
+				V0: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+				V1: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+				V2: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+			},
+		},
+	}
+	desiredSize := MeshTypes.Vector{
+		X: 4, Y: 4, Z: 8,
+	}
+	err := a.ScaleToDimensions(&desiredSize)
+	if err == nil {
+		t.Errorf("Mesh ScaleToDimensions() did not return error on faulty mesh")
+	}
+}
+
+func TestScaleToDimensionsSameVertex(t *testing.T) {
+	triangle := MeshTypes.Triangle{
+		V0: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+		V1: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+		V2: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+	}
+	a := MeshTypes.Mesh{
+		Triangles: []*MeshTypes.Triangle{
+			&triangle,
+			{
+				V0: triangle.V0,
+				V1: triangle.V1,
+				V2: triangle.V2,
+			},
+		},
+	}
+	desiredSize := MeshTypes.Vector{
+		X: 4, Y: 4, Z: 8,
+	}
+	err := a.ScaleToDimensions(&desiredSize)
+	if err == nil {
+		t.Errorf("Mesh ScaleToDimensions() did not return error on faulty mesh")
 	}
 }
