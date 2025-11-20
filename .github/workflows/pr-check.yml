@@ -85,6 +85,6 @@ jobs:
           go test -coverprofile=cover.out ./tests/... -coverpkg=./pkg/...,.,./internal/...
 
       - name: Coverage Report
-        uses: Jannik-Hm/go-test-coverage-report@v1.0.1
+        uses: Jannik-Hm/go-test-coverage-report@v1.1
         with:
           coverprofile: cover.out
