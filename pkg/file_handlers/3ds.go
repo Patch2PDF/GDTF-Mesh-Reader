@@ -91,7 +91,10 @@ func Load3DS(fileData *[]byte, desiredSize *MeshTypes.Vector) (*MeshTypes.Mesh, 
 	mesh := &MeshTypes.Mesh{Triangles: triangles}
 
 	if desiredSize != nil {
-		mesh.ScaleToDimensions(desiredSize)
+		err := mesh.ScaleToDimensions(desiredSize)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return mesh, nil
