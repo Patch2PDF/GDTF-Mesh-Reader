@@ -11,7 +11,7 @@ import (
 )
 
 type ModelReaderConf struct {
-	File          *io.Reader
+	File          io.Reader
 	Filename      *string
 	PrimitiveType string
 }
@@ -23,13 +23,13 @@ func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Me
 		filetype := filepath.Ext(*conf.Filename)
 		switch filetype {
 		case ".gltf", ".glb":
-			meshes, err := FileHandlers.LoadGLTF(*conf.File, desiredSize)
+			meshes, err := FileHandlers.LoadGLTF(conf.File, desiredSize)
 			if err != nil {
 				return nil, err
 			}
 			mesh = meshes[0]
 		case ".3ds":
-			data, err := io.ReadAll(*conf.File)
+			data, err := io.ReadAll(conf.File)
 			if err != nil {
 				return nil, err
 			}
