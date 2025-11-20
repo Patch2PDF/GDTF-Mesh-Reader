@@ -31,8 +31,13 @@ func (obj *Mesh) RotateAndTranslate(translationMatrix Matrix) {
 }
 
 func (obj *Mesh) calculateBoundingBox() Vector {
-	min := Vector{}
-	max := Vector{}
+	// init with first triangle to prohibit 0 values being min or max
+	if obj.Triangles[0] == nil || obj.Triangles[0].V0 == nil {
+		return Vector{}
+	}
+	min := obj.Triangles[0].V0.Position
+	max := obj.Triangles[0].V0.Position
+
 	for _, triangle := range obj.Triangles {
 		min = triangle.V0.Position.Min(&min)
 		max = triangle.V0.Position.Max(&max)
