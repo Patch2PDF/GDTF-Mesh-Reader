@@ -19,7 +19,7 @@ type ModelReaderConf struct {
 func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Mesh, error) {
 	var mesh *MeshTypes.Mesh
 
-	if conf.PrimitiveType == "undefined" && conf.File != nil && conf.Filename != nil && *conf.Filename != "" {
+	if conf.PrimitiveType == "Undefined" && conf.File != nil && conf.Filename != nil && *conf.Filename != "" {
 		filetype := filepath.Ext(*conf.Filename)
 		switch filetype {
 		case ".gltf", ".glb":
@@ -40,7 +40,7 @@ func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Me
 		default:
 			return nil, fmt.Errorf("unknown model type %s", filetype)
 		}
-	} else if conf.PrimitiveType != "undefined" && Primitives.Primitives[conf.PrimitiveType] != nil {
+	} else if conf.PrimitiveType != "Undefined" && Primitives.Primitives[conf.PrimitiveType] != nil {
 		tempMesh := Primitives.Primitives[conf.PrimitiveType].Copy()
 		mesh = &tempMesh
 		mesh.ScaleToDimensions(&desiredSize)
