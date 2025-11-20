@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   Format:
@@ -81,4 +82,9 @@ jobs:
 
       - name: Test
         run: |
-          go test -v ./...
+          go test -coverprofile=cover.out ./tests/... -coverpkg=./pkg/...,.,./internal/...
+
+      - name: Coverage Report
+        uses: Jannik-Hm/go-test-coverage-report@v1.1
+        with:
+          coverprofile: cover.out

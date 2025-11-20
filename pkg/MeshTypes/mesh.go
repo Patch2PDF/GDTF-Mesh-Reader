@@ -1,5 +1,9 @@
 package MeshTypes
 
+import (
+	"fmt"
+)
+
 type Mesh struct {
 	Triangles []*Triangle
 }
@@ -31,8 +35,13 @@ func (obj *Mesh) RotateAndTranslate(translationMatrix Matrix) {
 }
 
 func (obj *Mesh) calculateBoundingBox() Vector {
-	min := Vector{}
-	max := Vector{}
+	// init with first triangle to prohibit 0 values being min or max
+	if len(obj.Triangles) == 0 || obj.Triangles[0] == nil || obj.Triangles[0].V0 == nil {
+		return Vector{}
+	}
+	min := obj.Triangles[0].V0.Position
+	max := obj.Triangles[0].V0.Position
+
 	for _, triangle := range obj.Triangles {
 		min = triangle.V0.Position.Min(&min)
 		max = triangle.V0.Position.Max(&max)
@@ -50,8 +59,11 @@ func (obj *Mesh) calculateBoundingBox() Vector {
 	}
 }
 
-func (obj *Mesh) ScaleToDimensions(desiredSize *Vector) {
+func (obj *Mesh) ScaleToDimensions(desiredSize *Vector) error {
 	actual := obj.calculateBoundingBox()
+	if actual.X == 0 && actual.Y == 0 && actual.Z == 0 {
+		return fmt.Errorf("invalid Mesh with 0 dimension")
+	}
 	scaling := desiredSize.Div(actual)
 	scaledVectors := make(map[*Vertex]struct{})
 	for _, triangle := range obj.Triangles {
@@ -68,4 +80,5 @@ func (obj *Mesh) ScaleToDimensions(desiredSize *Vector) {
 			scaledVectors[triangle.V2] = struct{}{}
 		}
 	}
+	return nil
 }
