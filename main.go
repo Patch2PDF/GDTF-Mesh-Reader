@@ -55,6 +55,8 @@ func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Me
 		tempMesh := Primitives.Primitives[conf.PrimitiveType].Copy()
 		mesh = &tempMesh
 		mesh.ScaleToDimensions(&desiredSize)
+	} else {
+		return nil, fmt.Errorf("invalid ModelReader config")
 	}
 
 	return mesh, nil
