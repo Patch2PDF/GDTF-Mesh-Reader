@@ -16,6 +16,14 @@ type ModelReaderConf struct {
 	PrimitiveType string
 }
 
+// Load Primitive Models
+func LoadPrimitives() error {
+	return Primitives.LoadPrimitives()
+}
+
+// Get Model by mesh file or PrimitiveType.
+//
+// Note: requires LoadPrimitives() to be run beforehand if you want to get a primitive
 func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Mesh, error) {
 	var mesh *MeshTypes.Mesh
 
