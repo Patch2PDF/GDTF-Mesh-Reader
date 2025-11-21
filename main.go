@@ -48,7 +48,10 @@ func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Me
 		default:
 			return nil, fmt.Errorf("unknown model type %s", filetype)
 		}
-	} else if conf.PrimitiveType != "Undefined" && Primitives.Primitives[conf.PrimitiveType] != nil {
+	} else if conf.PrimitiveType != "Undefined" {
+		if Primitives.Primitives[conf.PrimitiveType] == nil {
+			return nil, fmt.Errorf("unknown primitive type %s", conf.PrimitiveType)
+		}
 		tempMesh := Primitives.Primitives[conf.PrimitiveType].Copy()
 		mesh = &tempMesh
 		mesh.ScaleToDimensions(&desiredSize)
