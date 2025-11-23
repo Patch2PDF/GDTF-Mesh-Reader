@@ -7,6 +7,19 @@ import (
 	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
 )
 
+func TestVectorDivScalar(t *testing.T) {
+	a := MeshTypes.Vector{
+		X: 2, Y: 4, Z: 6,
+	}
+	b := 2.0
+	want := MeshTypes.Vector{
+		X: 1, Y: 2, Z: 3,
+	}
+	if !reflect.DeepEqual(a.DivScalar(b), want) {
+		t.Error("Vector DivScalar() returned value does not match expected value")
+	}
+}
+
 func TestVectorAdd(t *testing.T) {
 	a := MeshTypes.Vector{
 		X: 1, Y: 2, Z: 3,

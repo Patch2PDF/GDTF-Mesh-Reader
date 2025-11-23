@@ -27,7 +27,7 @@ func LoadPrimitives() error {
 func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Mesh, error) {
 	var mesh *MeshTypes.Mesh
 
-	if conf.PrimitiveType == "Undefined" && conf.File != nil && conf.Filename != nil && *conf.Filename != "" {
+	if conf.File != nil && conf.Filename != nil && *conf.Filename != "" {
 		filetype := filepath.Ext(*conf.Filename)
 		switch filetype {
 		case ".gltf", ".glb":
@@ -48,15 +48,13 @@ func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Me
 		default:
 			return nil, fmt.Errorf("unknown model type %s", filetype)
 		}
-	} else if conf.PrimitiveType != "Undefined" {
+	} else {
 		if Primitives.Primitives[conf.PrimitiveType] == nil {
 			return nil, fmt.Errorf("unknown primitive type %s", conf.PrimitiveType)
 		}
 		tempMesh := Primitives.Primitives[conf.PrimitiveType].Copy()
 		mesh = &tempMesh
 		mesh.ScaleToDimensions(&desiredSize)
-	} else {
-		return nil, fmt.Errorf("invalid ModelReader config")
 	}
 
 	return mesh, nil
