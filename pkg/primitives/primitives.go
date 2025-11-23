@@ -30,16 +30,30 @@ var Primitives = map[string]*Types.Mesh{}
 
 func LoadPrimitives() error {
 	for primitiveType, path := range primitivePaths {
-		if path == "" {
-			continue
-		}
-		data, err := modelFS.ReadFile(path)
-		if err != nil {
-			return err
-		}
-		Primitives[primitiveType], err = FileHandlers.Load3DS(&data, nil)
-		if err != nil {
-			return err
+		switch primitiveType {
+		case "Cube":
+			mesh := NewCube()
+			Primitives[primitiveType] = &mesh
+		case "Cylinder":
+			mesh := NewCylinder(10, true)
+			Primitives[primitiveType] = &mesh
+		case "Sphere":
+			mesh := NewSphere(2)
+			Primitives[primitiveType] = &mesh
+		case "Pigtail":
+			Primitives[primitiveType] = &Types.Mesh{} // empty mesh
+		default:
+			if path == "" {
+				continue
+			}
+			data, err := modelFS.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			Primitives[primitiveType], err = FileHandlers.Load3DS(&data, nil)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
