@@ -12,6 +12,7 @@ import (
 var modelFS embed.FS
 
 var primitivePaths = map[string]string{
+	"Undefined":       "",
 	"Cube":            "",
 	"Cylinder":        "",
 	"Sphere":          "",
@@ -40,7 +41,7 @@ func LoadPrimitives() error {
 		case "Sphere":
 			mesh := NewSphere(2)
 			Primitives[primitiveType] = &mesh
-		case "Pigtail":
+		case "Pigtail", "Undefined":
 			Primitives[primitiveType] = &Types.Mesh{} // empty mesh
 		default:
 			if path == "" {
