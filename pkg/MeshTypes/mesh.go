@@ -31,6 +31,18 @@ func (obj *Mesh) RotateAndTranslate(translationMatrix Matrix) {
 		triangle.V0.Position = translationMatrix.MulPosition(triangle.V0.Position)
 		triangle.V1.Position = translationMatrix.MulPosition(triangle.V1.Position)
 		triangle.V2.Position = translationMatrix.MulPosition(triangle.V2.Position)
+		if triangle.V0.Normal != nil {
+			n0 := translationMatrix.MulDirection(*triangle.V0.Normal)
+			triangle.V0.Normal = &n0
+		}
+		if triangle.V1.Normal != nil {
+			n1 := translationMatrix.MulDirection(*triangle.V1.Normal)
+			triangle.V1.Normal = &n1
+		}
+		if triangle.V2.Normal != nil {
+			n2 := translationMatrix.MulDirection(*triangle.V2.Normal)
+			triangle.V2.Normal = &n2
+		}
 	}
 }
 
