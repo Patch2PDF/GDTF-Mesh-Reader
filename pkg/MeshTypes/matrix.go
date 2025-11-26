@@ -43,3 +43,10 @@ func (a Matrix) MulPosition(b Vector) Vector {
 	z := a.X20*b.X + a.X21*b.Y + a.X22*b.Z + a.X23
 	return Vector{x, y, z}
 }
+
+func (a Matrix) MulDirection(b Vector) Vector {
+	x := a.X00*b.X + a.X01*b.Y + a.X02*b.Z
+	y := a.X10*b.X + a.X11*b.Y + a.X12*b.Z
+	z := a.X20*b.X + a.X21*b.Y + a.X22*b.Z
+	return Vector{x, y, z}.Normalize()
+}
