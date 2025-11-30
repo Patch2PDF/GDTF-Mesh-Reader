@@ -10,7 +10,7 @@ import (
 	"github.com/qmuntal/gltf"
 )
 
-func LoadGLTF(file io.Reader, desiredSize Types.Vector) ([]*Types.Mesh, error) {
+func LoadGLTF(file io.Reader, desiredSize *Types.Vector) ([]*Types.Mesh, error) {
 	var doc gltf.Document
 	gltf.NewDecoder(file).Decode(&doc)
 
@@ -20,11 +20,14 @@ func LoadGLTF(file io.Reader, desiredSize Types.Vector) ([]*Types.Mesh, error) {
 		for _, p := range m.Primitives {
 			// contains Min and Max attr (for dimension calc)
 			posAccessor := doc.Accessors[p.Attributes[gltf.POSITION]]
-			scaling := Types.Vector{
-				// axes inverted to convert to correct coordinate system
-				X: desiredSize.X / (posAccessor.Max[0] - posAccessor.Min[0]),
-				Y: desiredSize.Y / (posAccessor.Max[2] - posAccessor.Min[2]),
-				Z: desiredSize.Z / (posAccessor.Max[1] - posAccessor.Min[1]),
+			scaling := Types.Vector{X: 1, Y: 1, Z: 1}
+			if desiredSize != nil {
+				scaling = Types.Vector{
+					// axes inverted to convert to correct coordinate system
+					X: desiredSize.X / (posAccessor.Max[0] - posAccessor.Min[0]),
+					Y: desiredSize.Y / (posAccessor.Max[2] - posAccessor.Min[2]),
+					Z: desiredSize.Z / (posAccessor.Max[1] - posAccessor.Min[1]),
+				}
 			}
 			positions, err := gltfVec3(&doc, posAccessor, scaling)
 			if err != nil {
