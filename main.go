@@ -24,7 +24,7 @@ func LoadPrimitives() error {
 // Get Model by mesh file or PrimitiveType.
 //
 // Note: requires LoadPrimitives() to be run beforehand if you want to get a primitive
-func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Mesh, error) {
+func GetModel(conf ModelReaderConf, desiredSize *MeshTypes.Vector) (*MeshTypes.Mesh, error) {
 	var mesh *MeshTypes.Mesh
 
 	if conf.File != nil && conf.Filename != nil && *conf.Filename != "" {
@@ -41,7 +41,7 @@ func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Me
 			if err != nil {
 				return nil, err
 			}
-			mesh, err = FileHandlers.Load3DS(&data, &desiredSize)
+			mesh, err = FileHandlers.Load3DS(&data, desiredSize)
 			if err != nil {
 				return nil, err
 			}
@@ -54,7 +54,9 @@ func GetModel(conf ModelReaderConf, desiredSize MeshTypes.Vector) (*MeshTypes.Me
 		}
 		tempMesh := Primitives.Primitives[conf.PrimitiveType].Copy()
 		mesh = &tempMesh
-		mesh.ScaleToDimensions(&desiredSize)
+		if desiredSize != nil {
+			mesh.ScaleToDimensions(desiredSize)
+		}
 	}
 
 	return mesh, nil
