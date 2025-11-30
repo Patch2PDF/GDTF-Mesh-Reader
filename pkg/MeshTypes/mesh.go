@@ -59,12 +59,7 @@ func (obj *Mesh) calculateBoundingBox() Vector {
 	}
 }
 
-func (obj *Mesh) ScaleToDimensions(desiredSize *Vector) error {
-	actual := obj.calculateBoundingBox()
-	if actual.X == 0 && actual.Y == 0 && actual.Z == 0 {
-		return fmt.Errorf("invalid Mesh with 0 dimension")
-	}
-	scaling := desiredSize.Div(actual)
+func (obj *Mesh) Scale(scaling Vector) error {
 	scaledVectors := make(map[*Vertex]struct{})
 	for _, triangle := range obj.Triangles {
 		if _, exists := scaledVectors[triangle.V0]; !exists {
@@ -81,4 +76,13 @@ func (obj *Mesh) ScaleToDimensions(desiredSize *Vector) error {
 		}
 	}
 	return nil
+}
+
+func (obj *Mesh) ScaleToDimensions(desiredSize *Vector) error {
+	actual := obj.calculateBoundingBox()
+	if actual.X == 0 && actual.Y == 0 && actual.Z == 0 {
+		return fmt.Errorf("invalid Mesh with 0 dimension")
+	}
+	scaling := desiredSize.Div(actual)
+	return obj.Scale(scaling)
 }
