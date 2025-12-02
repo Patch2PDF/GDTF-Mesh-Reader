@@ -25,8 +25,8 @@ func LoadGLTF(file io.Reader, desiredSize *Types.Vector) (*Types.Mesh, error) {
 		matrix := node.MatrixOrDefault()
 		transformationMatrices[*node.Mesh] = Types.Matrix{
 			X00: matrix[0], X01: matrix[4], X02: matrix[8], X03: matrix[12],
-			X10: matrix[2], X11: matrix[5], X12: matrix[9], X13: matrix[13],
-			X20: matrix[1], X21: matrix[6], X22: matrix[10], X23: matrix[14],
+			X10: matrix[1], X11: matrix[5], X12: matrix[9], X13: matrix[13],
+			X20: matrix[2], X21: matrix[6], X22: matrix[10], X23: matrix[14],
 			X30: matrix[3], X31: matrix[7], X32: matrix[11], X33: matrix[15],
 		}
 	}
