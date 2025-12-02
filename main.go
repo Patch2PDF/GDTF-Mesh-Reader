@@ -26,16 +26,16 @@ func LoadPrimitives() error {
 // Note: requires LoadPrimitives() to be run beforehand if you want to get a primitive
 func GetModel(conf ModelReaderConf, desiredSize *MeshTypes.Vector) (*MeshTypes.Mesh, error) {
 	var mesh *MeshTypes.Mesh
+	var err error
 
 	if conf.File != nil && conf.Filename != nil && *conf.Filename != "" {
 		filetype := filepath.Ext(*conf.Filename)
 		switch filetype {
 		case ".gltf", ".glb":
-			meshes, err := FileHandlers.LoadGLTF(conf.File, desiredSize)
+			mesh, err = FileHandlers.LoadGLTF(conf.File, desiredSize)
 			if err != nil {
 				return nil, err
 			}
-			mesh = meshes[0]
 		case ".3ds":
 			data, err := io.ReadAll(conf.File)
 			if err != nil {

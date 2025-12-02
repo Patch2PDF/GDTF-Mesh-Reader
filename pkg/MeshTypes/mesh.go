@@ -21,8 +21,10 @@ func (obj *Mesh) Copy() Mesh {
 	return Mesh{Triangles: triangles}
 }
 
-func (obj *Mesh) Add(mesh *Mesh) *Mesh {
-	obj.Triangles = append(obj.Triangles, mesh.Triangles...)
+func (obj *Mesh) Add(mesh ...*Mesh) *Mesh {
+	for _, element := range mesh {
+		obj.Triangles = append(obj.Triangles, element.Triangles...)
+	}
 	return obj
 }
 
