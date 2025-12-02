@@ -10,26 +10,59 @@ import (
 	"github.com/qmuntal/gltf"
 )
 
-func LoadGLTF(file io.Reader, desiredSize *Types.Vector) ([]*Types.Mesh, error) {
+func LoadGLTF(file io.Reader, desiredSize *Types.Vector) (*Types.Mesh, error) {
 	var doc gltf.Document
 	gltf.NewDecoder(file).Decode(&doc)
 
-	var meshes []*Types.Mesh
+	var meshes *Types.Mesh = &Types.Mesh{}
 
-	for _, m := range doc.Meshes {
+	transformationMatrices := map[int]Types.Matrix{}
+
+	for _, node := range doc.Nodes {
+		if node.Mesh == nil {
+			continue
+		}
+		matrix := node.MatrixOrDefault()
+		transformationMatrices[*node.Mesh] = Types.Matrix{
+			X00: matrix[0], X01: matrix[4], X02: matrix[8], X03: matrix[12],
+			X10: matrix[2], X11: matrix[5], X12: matrix[9], X13: matrix[13],
+			X20: matrix[1], X21: matrix[6], X22: matrix[10], X23: matrix[14],
+			X30: matrix[3], X31: matrix[7], X32: matrix[11], X33: matrix[15],
+		}
+	}
+
+	// calculate outer dimensions
+	min := Types.Vector{}
+	max := Types.Vector{}
+	for meshindex, m := range doc.Meshes {
 		for _, p := range m.Primitives {
 			// contains Min and Max attr (for dimension calc)
 			posAccessor := doc.Accessors[p.Attributes[gltf.POSITION]]
-			scaling := Types.Vector{X: 1, Y: 1, Z: 1}
-			if desiredSize != nil {
-				scaling = Types.Vector{
-					// axes inverted to convert to correct coordinate system
-					X: desiredSize.X / (posAccessor.Max[0] - posAccessor.Min[0]),
-					Y: desiredSize.Y / (posAccessor.Max[2] - posAccessor.Min[2]),
-					Z: desiredSize.Z / (posAccessor.Max[1] - posAccessor.Min[1]),
-				}
-			}
-			positions, err := gltfVec3(&doc, posAccessor, scaling)
+			// do transformation before getting the outer dimensions
+			tempMin := transformationMatrices[meshindex].MulPosition(Types.Vector{
+				X: posAccessor.Min[0],
+				Y: posAccessor.Min[2],
+				Z: posAccessor.Min[1],
+			})
+			tempMax := transformationMatrices[meshindex].MulPosition(Types.Vector{
+				X: posAccessor.Max[0],
+				Y: posAccessor.Max[2],
+				Z: posAccessor.Max[1],
+			})
+			min = min.Min(&tempMin)
+			max = max.Max(&tempMax)
+		}
+	}
+
+	scaling := Types.Vector{X: 1, Y: 1, Z: 1}
+	if desiredSize != nil {
+		scaling = desiredSize.Div(max.Sub(min))
+	}
+
+	for meshindex, m := range doc.Meshes {
+		for _, p := range m.Primitives {
+			posAccessor := doc.Accessors[p.Attributes[gltf.POSITION]]
+			positions, err := gltfVec3(&doc, posAccessor, transformationMatrices[meshindex], scaling)
 			if err != nil {
 				return nil, err
 			}
@@ -37,7 +70,7 @@ func LoadGLTF(file io.Reader, desiredSize *Types.Vector) ([]*Types.Mesh, error) 
 			var normals []Types.Vector
 			if nIdx, ok := p.Attributes[gltf.NORMAL]; ok {
 				normalAccessor := doc.Accessors[nIdx]
-				normals, err = gltfVec3(&doc, normalAccessor, Types.Vector{X: 1, Y: 1, Z: 1})
+				normals, err = gltfVec3(&doc, normalAccessor, transformationMatrices[meshindex], Types.Vector{X: 1, Y: 1, Z: 1})
 				if err != nil {
 					return nil, err
 				}
@@ -68,14 +101,14 @@ func LoadGLTF(file io.Reader, desiredSize *Types.Vector) ([]*Types.Mesh, error) 
 					mesh.AddTriangle(&Types.Triangle{V0: v0, V1: v1, V2: v2})
 				}
 
-				meshes = append(meshes, &mesh)
+				meshes.Add(&mesh)
 			}
 		}
 	}
 	return meshes, nil
 }
 
-func gltfVec3(doc *gltf.Document, acc *gltf.Accessor, scaling Types.Vector) ([]Types.Vector, error) {
+func gltfVec3(doc *gltf.Document, acc *gltf.Accessor, transformationMatrix Types.Matrix, scaling Types.Vector) ([]Types.Vector, error) {
 	bufView := doc.BufferViews[*acc.BufferView]
 	buffer := doc.Buffers[bufView.Buffer]
 
@@ -87,10 +120,18 @@ func gltfVec3(doc *gltf.Document, acc *gltf.Accessor, scaling Types.Vector) ([]T
 	for i := 0; i < acc.Count; i++ {
 		base := i * 12
 		// axes inverted to convert to correct coordinate system
-		x := math.Float32frombits(binary.LittleEndian.Uint32(raw[base+0:]))
-		y := -(math.Float32frombits(binary.LittleEndian.Uint32(raw[base+8:])))
-		z := math.Float32frombits(binary.LittleEndian.Uint32(raw[base+4:]))
-		vectors[i] = Types.Vector{X: float64(x) * scaling.X, Y: float64(y) * scaling.Y, Z: float64(z) * scaling.Z}
+		vec := Types.Vector{
+			X: float64(math.Float32frombits(binary.LittleEndian.Uint32(raw[base+0:]))),
+			Y: float64(math.Float32frombits(binary.LittleEndian.Uint32(raw[base+4:]))),
+			Z: float64(math.Float32frombits(binary.LittleEndian.Uint32(raw[base+8:]))),
+		}
+		transformed := transformationMatrix.MulPosition(vec)
+		scaled := Types.Vector{
+			X: transformed.X,
+			Y: -transformed.Z,
+			Z: transformed.Y,
+		}.Mult(scaling)
+		vectors[i] = scaled // vec.Mult(scaling)
 	}
 
 	return vectors, nil
