@@ -23,7 +23,9 @@ func (obj *Mesh) Copy() Mesh {
 
 func (obj *Mesh) Add(mesh ...*Mesh) *Mesh {
 	for _, element := range mesh {
-		obj.Triangles = append(obj.Triangles, element.Triangles...)
+		if element != nil {
+			obj.Triangles = append(obj.Triangles, element.Triangles...)
+		}
 	}
 	return obj
 }
