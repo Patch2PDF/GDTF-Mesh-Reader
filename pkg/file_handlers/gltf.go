@@ -6,7 +6,7 @@ import (
 	"io"
 	"math"
 
-	Types "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+	Types "github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 	"github.com/qmuntal/gltf"
 )
 

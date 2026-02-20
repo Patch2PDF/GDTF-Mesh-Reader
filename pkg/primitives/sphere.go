@@ -21,7 +21,7 @@ package Primitives
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Types "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+import Types "github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 
 func NewSphere(detail int) Types.Mesh {
 	var triangles []Types.Triangle

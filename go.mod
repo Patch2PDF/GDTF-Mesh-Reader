@@ -1,4 +1,4 @@
-module github.com/Patch2PDF/GDTF-Mesh-Reader
+module github.com/Patch2PDF/GDTF-Mesh-Reader/v2
 
 go 1.25.4
 
