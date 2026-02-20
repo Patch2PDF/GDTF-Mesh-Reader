@@ -81,7 +81,8 @@ func TestRotateAndTranslate(t *testing.T) {
 	result := a.Copy()
 	result.RotateAndTranslate(translationMatrix)
 	want := a.Copy()
-	for _, triangle := range want.Triangles {
+	for triangle_id := range want.Triangles {
+		triangle := &want.Triangles[triangle_id]
 		triangle.V0.Position = translationMatrix.MulPosition(triangle.V0.Position) // safe to use as func is tested in another place
 		triangle.V1.Position = translationMatrix.MulPosition(triangle.V1.Position)
 		triangle.V2.Position = translationMatrix.MulPosition(triangle.V2.Position)

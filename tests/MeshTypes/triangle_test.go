@@ -27,7 +27,7 @@ func TestTriangleCopy(t *testing.T) {
 		V2: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 13, Y: 14, Z: 15}, Normal: &MeshTypes.Vector{X: 16, Y: 17, Z: 18}},
 	}
 	copy := a.Copy()
-	if !(reflect.DeepEqual(copy, a) && a.V0 != copy.V0 && a.V1 != copy.V1 && a.V2 != copy.V2) {
+	if !(reflect.DeepEqual(copy, a) && a.V0.Normal != copy.V0.Normal && a.V1.Normal != copy.V1.Normal && a.V2.Normal != copy.V2.Normal) {
 		t.Error("Triangle Copy() returned value does not match expected value")
 	}
 }

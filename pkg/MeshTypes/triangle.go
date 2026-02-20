@@ -13,5 +13,5 @@ func (t *Triangle) Normal() Vector {
 }
 
 func (obj *Triangle) Copy() Triangle {
-	return Triangle{V0: obj.V0, V1: obj.V1, V2: obj.V2}
+	return Triangle{V0: obj.V0.Copy(), V1: obj.V1.Copy(), V2: obj.V2.Copy()}
 }
