@@ -37,6 +37,15 @@ func (a Matrix) Mul(b Matrix) Matrix {
 	return m
 }
 
+func (a Matrix) MulScalar(b float64) Matrix {
+	return Matrix{
+		a.X00 * b, a.X01 * b, a.X02 * b, a.X03 * b,
+		a.X10 * b, a.X11 * b, a.X12 * b, a.X13 * b,
+		a.X20 * b, a.X21 * b, a.X22 * b, a.X23 * b,
+		a.X30 * b, a.X31 * b, a.X32 * b, a.X33 * b,
+	}
+}
+
 func (a Matrix) MulPosition(b Vector) Vector {
 	x := a.X00*b.X + a.X01*b.Y + a.X02*b.Z + a.X03
 	y := a.X10*b.X + a.X11*b.Y + a.X12*b.Z + a.X13

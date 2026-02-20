@@ -8,17 +8,17 @@ import (
 	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
 )
 
-func RandomTriangle() *MeshTypes.Triangle {
-	return &MeshTypes.Triangle{
+func RandomTriangle() MeshTypes.Triangle {
+	return MeshTypes.Triangle{
 		V0: RandomVertex(),
 		V1: RandomVertex(),
 		V2: RandomVertex(),
 	}
 }
 
-func RandomVertex() *MeshTypes.Vertex {
+func RandomVertex() MeshTypes.Vertex {
 	normal := RandomVector()
-	return &MeshTypes.Vertex{
+	return MeshTypes.Vertex{
 		Position: RandomVector(),
 		Normal:   &normal,
 	}
@@ -34,19 +34,19 @@ func RandomVector() MeshTypes.Vector {
 
 func TestAddTriangle(t *testing.T) {
 	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{RandomTriangle()},
+		Triangles: []MeshTypes.Triangle{RandomTriangle()},
 	}
 	b := RandomTriangle()
 	copy := a.Copy()
 	copy.AddTriangle(b)
-	if !reflect.DeepEqual(copy, MeshTypes.Mesh{Triangles: []*MeshTypes.Triangle{a.Triangles[0], b}}) {
+	if !reflect.DeepEqual(copy, MeshTypes.Mesh{Triangles: []MeshTypes.Triangle{a.Triangles[0], b}}) {
 		t.Errorf("Mesh AddTriangle() Output does not match expected")
 	}
 }
 
 func TestMeshCopy(t *testing.T) {
 	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{RandomTriangle()},
+		Triangles: []MeshTypes.Triangle{RandomTriangle()},
 	}
 	copy := a.Copy()
 	if !(reflect.DeepEqual(a, copy) && &a != &copy) {
@@ -56,21 +56,21 @@ func TestMeshCopy(t *testing.T) {
 
 func TestAddMesh(t *testing.T) {
 	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{RandomTriangle()},
+		Triangles: []MeshTypes.Triangle{RandomTriangle()},
 	}
 	b := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{RandomTriangle()},
+		Triangles: []MeshTypes.Triangle{RandomTriangle()},
 	}
 	copy := a.Copy()
 	result := copy.Add(&b)
-	if !reflect.DeepEqual(*result, MeshTypes.Mesh{Triangles: []*MeshTypes.Triangle{a.Triangles[0], b.Triangles[0]}}) {
+	if !reflect.DeepEqual(*result, MeshTypes.Mesh{Triangles: []MeshTypes.Triangle{a.Triangles[0], b.Triangles[0]}}) {
 		t.Errorf("Mesh Add() Output does not match expected")
 	}
 }
 
 func TestRotateAndTranslate(t *testing.T) {
 	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{RandomTriangle()},
+		Triangles: []MeshTypes.Triangle{RandomTriangle()},
 	}
 	translationMatrix := MeshTypes.Matrix{
 		X00: 1, X01: -1, X02: 5, X03: -20,
@@ -105,11 +105,11 @@ func TestRotateAndTranslate(t *testing.T) {
 
 func TestScaleToDimensions(t *testing.T) {
 	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{
+		Triangles: []MeshTypes.Triangle{
 			{
-				V0: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: -1, Y: 1, Z: -1}},
-				V1: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 1, Y: -3, Z: 1}},
-				V2: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 1, Y: 1, Z: 0}},
+				V0: MeshTypes.Vertex{Position: MeshTypes.Vector{X: -1, Y: 1, Z: -1}},
+				V1: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 1, Y: -3, Z: 1}},
+				V2: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 1, Y: 1, Z: 0}},
 			},
 		},
 	}
@@ -119,11 +119,11 @@ func TestScaleToDimensions(t *testing.T) {
 	result := a.Copy()
 	result.ScaleToDimensions(&desiredSize)
 	want := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{
+		Triangles: []MeshTypes.Triangle{
 			{
-				V0: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: -2, Y: 1, Z: -4}},
-				V1: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 2, Y: -3, Z: 4}},
-				V2: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 2, Y: 1, Z: 0}},
+				V0: MeshTypes.Vertex{Position: MeshTypes.Vector{X: -2, Y: 1, Z: -4}},
+				V1: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 2, Y: -3, Z: 4}},
+				V2: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 2, Y: 1, Z: 0}},
 			},
 		},
 	}
@@ -134,39 +134,7 @@ func TestScaleToDimensions(t *testing.T) {
 
 func TestScaleToDimensionsEmptyMesh(t *testing.T) {
 	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{},
-	}
-	desiredSize := MeshTypes.Vector{
-		X: 4, Y: 4, Z: 8,
-	}
-	err := a.ScaleToDimensions(&desiredSize)
-	if err == nil {
-		t.Errorf("Mesh ScaleToDimensions() did not return error on faulty mesh")
-	}
-}
-
-func TestScaleToDimensionsNullTriangle(t *testing.T) {
-	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{nil},
-	}
-	desiredSize := MeshTypes.Vector{
-		X: 4, Y: 4, Z: 8,
-	}
-	err := a.ScaleToDimensions(&desiredSize)
-	if err == nil {
-		t.Errorf("Mesh ScaleToDimensions() did not return error on faulty mesh")
-	}
-}
-
-func TestScaleToDimensionsNullVertex(t *testing.T) {
-	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{
-			{
-				V0: nil,
-				V1: nil,
-				V2: nil,
-			},
-		},
+		Triangles: []MeshTypes.Triangle{},
 	}
 	desiredSize := MeshTypes.Vector{
 		X: 4, Y: 4, Z: 8,
@@ -179,11 +147,11 @@ func TestScaleToDimensionsNullVertex(t *testing.T) {
 
 func TestScaleToDimensions0Size(t *testing.T) {
 	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{
+		Triangles: []MeshTypes.Triangle{
 			{
-				V0: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
-				V1: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
-				V2: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+				V0: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+				V1: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+				V2: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
 			},
 		},
 	}
@@ -198,13 +166,13 @@ func TestScaleToDimensions0Size(t *testing.T) {
 
 func TestScaleToDimensionsSameVertex(t *testing.T) {
 	triangle := MeshTypes.Triangle{
-		V0: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
-		V1: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
-		V2: &MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+		V0: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+		V1: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
+		V2: MeshTypes.Vertex{Position: MeshTypes.Vector{X: 0, Y: 0, Z: 0}},
 	}
 	a := MeshTypes.Mesh{
-		Triangles: []*MeshTypes.Triangle{
-			&triangle,
+		Triangles: []MeshTypes.Triangle{
+			triangle,
 			{
 				V0: triangle.V0,
 				V1: triangle.V1,

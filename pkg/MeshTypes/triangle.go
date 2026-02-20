@@ -1,9 +1,9 @@
 package MeshTypes
 
 type Triangle struct {
-	V0 *Vertex
-	V1 *Vertex
-	V2 *Vertex
+	V0 Vertex
+	V1 Vertex
+	V2 Vertex
 }
 
 func (t *Triangle) Normal() Vector {
@@ -13,8 +13,5 @@ func (t *Triangle) Normal() Vector {
 }
 
 func (obj *Triangle) Copy() Triangle {
-	V0 := obj.V0.Copy()
-	V1 := obj.V1.Copy()
-	V2 := obj.V2.Copy()
-	return Triangle{V0: &V0, V1: &V1, V2: &V2}
+	return Triangle{V0: obj.V0, V1: obj.V1, V2: obj.V2}
 }

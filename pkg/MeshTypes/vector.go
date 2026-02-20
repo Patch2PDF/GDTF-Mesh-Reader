@@ -53,14 +53,14 @@ func (a Vector) Normalize() Vector {
 	return Vector{a.X * r, a.Y * r, a.Z * r}
 }
 
-func (obj Vector) ToVertex(normal *Vector) *Vertex {
-	return &Vertex{
+func (obj Vector) ToVertex(normal *Vector) Vertex {
+	return Vertex{
 		Position: obj,
 		Normal:   normal,
 	}
 }
 
-func (a Vector) Min(b *Vector) Vector {
+func (a Vector) Min(b Vector) Vector {
 	return Vector{
 		math.Min(a.X, b.X),
 		math.Min(a.Y, b.Y),
@@ -68,7 +68,7 @@ func (a Vector) Min(b *Vector) Vector {
 	}
 }
 
-func (a Vector) Max(b *Vector) Vector {
+func (a Vector) Max(b Vector) Vector {
 	return Vector{
 		math.Max(a.X, b.X),
 		math.Max(a.Y, b.Y),

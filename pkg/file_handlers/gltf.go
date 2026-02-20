@@ -49,8 +49,8 @@ func LoadGLTF(file io.Reader, desiredSize *Types.Vector) (*Types.Mesh, error) {
 				Y: posAccessor.Max[2],
 				Z: posAccessor.Max[1],
 			})
-			min = min.Min(&tempMin)
-			max = max.Max(&tempMax)
+			min = min.Min(tempMin)
+			max = max.Max(tempMax)
 		}
 	}
 
@@ -98,7 +98,7 @@ func LoadGLTF(file io.Reader, desiredSize *Types.Vector) (*Types.Mesh, error) {
 					v1 := positions[indices[i+1]].ToVertex(n1)
 					v2 := positions[indices[i+2]].ToVertex(n2)
 
-					mesh.AddTriangle(&Types.Triangle{V0: v0, V1: v1, V2: v2})
+					mesh.AddTriangle(Types.Triangle{V0: v0, V1: v1, V2: v2})
 				}
 
 				meshes.Add(&mesh)

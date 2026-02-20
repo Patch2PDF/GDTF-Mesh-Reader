@@ -89,14 +89,14 @@ func TestToVertex(t *testing.T) {
 		Position: a,
 		Normal:   nil,
 	}
-	if !reflect.DeepEqual(*a.ToVertex(nil), wantFirst) {
+	if !reflect.DeepEqual(a.ToVertex(nil), wantFirst) {
 		t.Error("Vector To Vertex returned value with nil Normal does not match expected value")
 	}
 	wantSecond := MeshTypes.Vertex{
 		Position: a,
 		Normal:   &b,
 	}
-	if !reflect.DeepEqual(*a.ToVertex(&b), wantSecond) || &b != wantSecond.Normal {
+	if !reflect.DeepEqual(a.ToVertex(&b), wantSecond) || &b != wantSecond.Normal {
 		t.Error("Vector To Vertex returned value with Normal does not match expected value")
 	}
 }
@@ -111,7 +111,7 @@ func TestMin(t *testing.T) {
 	want := MeshTypes.Vector{
 		X: 1, Y: 2, Z: 3,
 	}
-	if !reflect.DeepEqual(a.Min(&b), want) {
+	if !reflect.DeepEqual(a.Min(b), want) {
 		t.Error("Vector Min() returned value does not match expected value")
 	}
 }
@@ -126,7 +126,7 @@ func TestMax(t *testing.T) {
 	want := MeshTypes.Vector{
 		X: 3, Y: 4, Z: 6,
 	}
-	if !reflect.DeepEqual(a.Max(&b), want) {
+	if !reflect.DeepEqual(a.Max(b), want) {
 		t.Error("Vector Max() returned value does not match expected value")
 	}
 }
