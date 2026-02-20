@@ -32,7 +32,7 @@ func radians(degrees float64) float64 {
 }
 
 func NewCylinder(step int, capped bool) Types.Mesh {
-	var triangles []*Types.Triangle
+	var triangles []Types.Triangle
 	for a0 := 0; a0 < 360; a0 += step {
 		a1 := (a0 + step) % 360
 		r0 := radians(float64(a0))
@@ -45,15 +45,15 @@ func NewCylinder(step int, capped bool) Types.Mesh {
 		p10 := Types.Vector{X: x1, Y: y1, Z: -0.5}
 		p11 := Types.Vector{X: x1, Y: y1, Z: 0.5}
 		p01 := Types.Vector{X: x0, Y: y0, Z: 0.5}
-		t1 := &Types.Triangle{V0: p00.ToVertex(nil), V1: p10.ToVertex(nil), V2: p11.ToVertex(nil)}
-		t2 := &Types.Triangle{V0: p00.ToVertex(nil), V1: p11.ToVertex(nil), V2: p01.ToVertex(nil)}
+		t1 := Types.Triangle{V0: p00.ToVertex(nil), V1: p10.ToVertex(nil), V2: p11.ToVertex(nil)}
+		t2 := Types.Triangle{V0: p00.ToVertex(nil), V1: p11.ToVertex(nil), V2: p01.ToVertex(nil)}
 		triangles = append(triangles, t1)
 		triangles = append(triangles, t2)
 		if capped {
 			p0 := Types.Vector{X: 0, Y: 0, Z: -0.5}
 			p1 := Types.Vector{X: 0, Y: 0, Z: 0.5}
-			t3 := &Types.Triangle{V0: p0.ToVertex(nil), V1: p10.ToVertex(nil), V2: p00.ToVertex(nil)}
-			t4 := &Types.Triangle{V0: p1.ToVertex(nil), V1: p01.ToVertex(nil), V2: p11.ToVertex(nil)}
+			t3 := Types.Triangle{V0: p0.ToVertex(nil), V1: p10.ToVertex(nil), V2: p00.ToVertex(nil)}
+			t4 := Types.Triangle{V0: p1.ToVertex(nil), V1: p01.ToVertex(nil), V2: p11.ToVertex(nil)}
 			triangles = append(triangles, t3)
 			triangles = append(triangles, t4)
 		}

@@ -37,9 +37,9 @@ func Load3DS(fileData *[]byte, desiredSize *MeshTypes.Vector) (*MeshTypes.Mesh, 
 
 	file := bytes.NewReader(*fileData)
 
-	var vertices []*MeshTypes.Vertex
-	var faces []*MeshTypes.Triangle
-	var triangles []*MeshTypes.Triangle
+	var vertices []MeshTypes.Vertex
+	var faces []MeshTypes.Triangle
+	var triangles []MeshTypes.Triangle
 	for {
 		header := ChunkHeader{}
 		if err := binary.Read(file, binary.LittleEndian, &header); err != nil {
@@ -100,7 +100,7 @@ func Load3DS(fileData *[]byte, desiredSize *MeshTypes.Vector) (*MeshTypes.Mesh, 
 	return mesh, nil
 }
 
-func readSmoothingGroups(file *bytes.Reader, triangles []*MeshTypes.Triangle) error {
+func readSmoothingGroups(file *bytes.Reader, triangles []MeshTypes.Triangle) error {
 	groups := make([]uint32, len(triangles))
 	if err := binary.Read(file, binary.LittleEndian, &groups); err != nil {
 		return err
@@ -162,36 +162,36 @@ func readSmoothingGroups(file *bytes.Reader, triangles []*MeshTypes.Triangle) er
 // 	return matrix, nil
 // }
 
-func readVertexList(file *bytes.Reader) ([]*MeshTypes.Vertex, error) {
+func readVertexList(file *bytes.Reader) ([]MeshTypes.Vertex, error) {
 	var count uint16
 	if err := binary.Read(file, binary.LittleEndian, &count); err != nil {
 		return nil, err
 	}
-	result := make([]*MeshTypes.Vertex, count)
+	result := make([]MeshTypes.Vertex, count)
 	for i := range result {
 		var v [3]float32
 		if err := binary.Read(file, binary.LittleEndian, &v); err != nil {
 			return nil, err
 		}
-		result[i] = &MeshTypes.Vertex{
+		result[i] = MeshTypes.Vertex{
 			Position: MeshTypes.Vector{X: float64(v[0]), Y: float64(v[1]), Z: float64(v[2])},
 		}
 	}
 	return result, nil
 }
 
-func readFaceList(file *bytes.Reader, vertices []*MeshTypes.Vertex) ([]*MeshTypes.Triangle, error) {
+func readFaceList(file *bytes.Reader, vertices []MeshTypes.Vertex) ([]MeshTypes.Triangle, error) {
 	var count uint16
 	if err := binary.Read(file, binary.LittleEndian, &count); err != nil {
 		return nil, err
 	}
-	result := make([]*MeshTypes.Triangle, count)
+	result := make([]MeshTypes.Triangle, count)
 	for i := range result {
 		var v [4]uint16
 		if err := binary.Read(file, binary.LittleEndian, &v); err != nil {
 			return nil, err
 		}
-		result[i] = &MeshTypes.Triangle{
+		result[i] = MeshTypes.Triangle{
 			V0: vertices[v[0]], V1: vertices[v[1]], V2: vertices[v[2]],
 		}
 	}

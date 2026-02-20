@@ -19,6 +19,25 @@ func TestIdentityMatrix(t *testing.T) {
 	}
 }
 
+func TestMulScalar(t *testing.T) {
+	a := MeshTypes.Matrix{
+		X00: 1, X01: 2, X02: 3, X03: 4,
+		X10: 5, X11: 6, X12: 7, X13: 8,
+		X20: 9, X21: 10, X22: 11, X23: 12,
+		X30: 13, X31: 14, X32: 15, X33: 16,
+	}
+	want := MeshTypes.Matrix{
+		X00: 3, X01: 6, X02: 9, X03: 12,
+		X10: 15, X11: 18, X12: 21, X13: 24,
+		X20: 27, X21: 30, X22: 33, X23: 36,
+		X30: 39, X31: 42, X32: 45, X33: 48,
+	}
+	result := a.MulScalar(3)
+	if !reflect.DeepEqual(result, want) {
+		t.Errorf(`Matrix Scalar Multiplication Output does not match`)
+	}
+}
+
 func TestMatrixMul(t *testing.T) {
 	a := MeshTypes.Matrix{
 		X00: 1, X01: 2, X02: 3, X03: 4,

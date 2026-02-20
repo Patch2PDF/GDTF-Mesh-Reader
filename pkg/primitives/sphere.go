@@ -24,7 +24,7 @@ package Primitives
 import Types "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
 
 func NewSphere(detail int) Types.Mesh {
-	var triangles []*Types.Triangle
+	var triangles []Types.Triangle
 	ico := NewIcosahedron()
 	for _, t := range ico.Triangles {
 		v1 := t.V0.Position
@@ -35,16 +35,16 @@ func NewSphere(detail int) Types.Mesh {
 	return Types.Mesh{Triangles: triangles}
 }
 
-func newSphereHelper(detail int, v1, v2, v3 Types.Vector) []*Types.Triangle {
+func newSphereHelper(detail int, v1, v2, v3 Types.Vector) []Types.Triangle {
 	if detail == 0 {
-		t := &Types.Triangle{
+		t := Types.Triangle{
 			V0: v1.ToVertex(nil),
 			V1: v2.ToVertex(nil),
 			V2: v3.ToVertex(nil),
 		}
-		return []*Types.Triangle{t}
+		return []Types.Triangle{t}
 	}
-	var triangles []*Types.Triangle
+	var triangles []Types.Triangle
 	v12 := v1.Add(v2).DivScalar(2).Normalize()
 	v13 := v1.Add(v3).DivScalar(2).Normalize()
 	v23 := v2.Add(v3).DivScalar(2).Normalize()
@@ -94,12 +94,12 @@ func NewIcosahedron() *Types.Mesh {
 		{11, 7, 9},
 		{11, 9, 10},
 	}
-	triangles := make([]*Types.Triangle, len(indices))
+	triangles := make([]Types.Triangle, len(indices))
 	for i, idx := range indices {
 		p1 := vertices[idx[0]]
 		p2 := vertices[idx[1]]
 		p3 := vertices[idx[2]]
-		triangles[i] = &Types.Triangle{
+		triangles[i] = Types.Triangle{
 			V0: p1.ToVertex(nil),
 			V1: p2.ToVertex(nil),
 			V2: p3.ToVertex(nil),
