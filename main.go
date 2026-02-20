@@ -5,9 +5,9 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
-	FileHandlers "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/file_handlers"
-	Primitives "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/primitives"
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
+	FileHandlers "github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/file_handlers"
+	Primitives "github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/primitives"
 )
 
 type ModelReaderConf struct {

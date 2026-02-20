@@ -26,7 +26,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	MeshTypes "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+	MeshTypes "github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 )
 
 func Load3DS(fileData *[]byte, desiredSize *MeshTypes.Vector) (*MeshTypes.Mesh, error) {

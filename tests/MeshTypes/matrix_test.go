@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 )
 
 func TestIdentityMatrix(t *testing.T) {
