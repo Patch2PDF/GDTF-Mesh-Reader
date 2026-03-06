@@ -1,11 +1,29 @@
 package MeshTypes_Test
 
 import (
+	"math"
+	"math/rand"
 	"reflect"
 	"testing"
 
 	"github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 )
+
+func MatrixEquals(a MeshTypes.Matrix, b MeshTypes.Matrix) bool {
+	// Helper to check individual floats
+	isClose := func(a, b float64) bool {
+		return math.Abs(a-b) < 0.000000000000001
+	}
+
+	return isClose(a.X00, b.X00) && isClose(a.X01, b.X01) &&
+		isClose(a.X02, b.X02) && isClose(a.X03, b.X03) &&
+		isClose(a.X10, b.X10) && isClose(a.X11, b.X11) &&
+		isClose(a.X12, b.X12) && isClose(a.X13, b.X13) &&
+		isClose(a.X20, b.X20) && isClose(a.X21, b.X21) &&
+		isClose(a.X22, b.X22) && isClose(a.X23, b.X23) &&
+		isClose(a.X30, b.X30) && isClose(a.X31, b.X31) &&
+		isClose(a.X32, b.X32) && isClose(a.X33, b.X33)
+}
 
 func TestIdentityMatrix(t *testing.T) {
 	want := MeshTypes.Matrix{
@@ -82,5 +100,43 @@ func TestMulPosition(t *testing.T) {
 
 	if !reflect.DeepEqual(a.MulPosition(b), want) {
 		t.Errorf(`Matrix Vector Multiplication Output does not match`)
+	}
+}
+
+func TestRotation(t *testing.T) {
+	a := MeshTypes.Matrix{
+		X00: rand.Float64(), X01: rand.Float64(), X02: rand.Float64(), X03: rand.Float64(),
+		X10: rand.Float64(), X11: rand.Float64(), X12: rand.Float64(), X13: rand.Float64(),
+		X20: rand.Float64(), X21: rand.Float64(), X22: rand.Float64(), X23: rand.Float64(),
+		X30: 0, X31: 0, X32: 0, X33: 1,
+	}
+
+	alpha := rand.Float64()
+	beta := rand.Float64()
+	gamma := rand.Float64()
+
+	rotation := MeshTypes.GenerateRotationMatrix(alpha, beta, gamma)
+
+	if !reflect.DeepEqual(a.Mul(rotation), a.Rotate(alpha, beta, gamma)) {
+		t.Errorf(`Matrix Vector Rotation Output does not match`)
+	}
+}
+
+func TestMatrixRotationReversal(t *testing.T) {
+	a := MeshTypes.Matrix{
+		X00: rand.Float64(), X01: rand.Float64(), X02: rand.Float64(), X03: rand.Float64(),
+		X10: rand.Float64(), X11: rand.Float64(), X12: rand.Float64(), X13: rand.Float64(),
+		X20: rand.Float64(), X21: rand.Float64(), X22: rand.Float64(), X23: rand.Float64(),
+		X30: 0, X31: 0, X32: 0, X33: 1,
+	}
+
+	rotation := MeshTypes.GenerateRotationMatrix(rand.Float64(), rand.Float64(), rand.Float64())
+
+	rotated := a.Mul(rotation)
+
+	back_rotated := rotated.ReverseTransformation(rotation)
+
+	if !MatrixEquals(a, back_rotated) {
+		t.Errorf(`Matrix Vector Rotation Reversal Output does not match`)
 	}
 }

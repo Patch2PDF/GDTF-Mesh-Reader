@@ -82,7 +82,7 @@ func (a Matrix) Rotate(alpha float64, beta float64, gamma float64) Matrix {
 	return a.Mul(GenerateRotationMatrix(alpha, beta, gamma))
 }
 
-func (a Matrix) ReverseRotation(previousRotationMatrix Matrix) Matrix {
+func (a Matrix) ReverseTransformation(previousRotationMatrix Matrix) Matrix {
 	inv := Matrix{
 		X00: previousRotationMatrix.X00, X01: previousRotationMatrix.X10, X02: previousRotationMatrix.X20, X03: 0,
 		X10: previousRotationMatrix.X01, X11: previousRotationMatrix.X11, X12: previousRotationMatrix.X21, X13: 0,
