@@ -6,6 +6,7 @@ import (
 	"io"
 	"math"
 
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 	Types "github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 	"github.com/qmuntal/gltf"
 )
@@ -23,11 +24,15 @@ func LoadGLTF(file io.Reader, desiredSize *Types.Vector) (*Types.Mesh, error) {
 			continue
 		}
 		matrix := node.MatrixOrDefault()
-		transformationMatrices[*node.Mesh] = Types.Matrix{
-			X00: matrix[0], X01: matrix[4], X02: matrix[8], X03: matrix[12],
-			X10: matrix[1], X11: matrix[5], X12: matrix[9], X13: matrix[13],
-			X20: matrix[2], X21: matrix[6], X22: matrix[10], X23: matrix[14],
-			X30: matrix[3], X31: matrix[7], X32: matrix[11], X33: matrix[15],
+		if matrix != gltf.DefaultMatrix {
+			transformationMatrices[*node.Mesh] = Types.Matrix{
+				X00: matrix[0], X01: matrix[4], X02: matrix[8], X03: matrix[12],
+				X10: matrix[1], X11: matrix[5], X12: matrix[9], X13: matrix[13],
+				X20: matrix[2], X21: matrix[6], X22: matrix[10], X23: matrix[14],
+				X30: matrix[3], X31: matrix[7], X32: matrix[11], X33: matrix[15],
+			}
+		} else {
+			transformationMatrices[*node.Mesh] = gltfParseScaleRotationTranslation(node.RotationOrDefault(), node.ScaleOrDefault(), node.TranslationOrDefault())
 		}
 	}
 
@@ -163,4 +168,13 @@ func gltfIndices(doc *gltf.Document, acc *gltf.Accessor) ([]int, error) {
 	}
 
 	return out, nil
+}
+
+func gltfParseScaleRotationTranslation(rotation [4]float64, scale [3]float64, translation [3]float64) MeshTypes.Matrix {
+	return MeshTypes.Matrix{
+		X00: (1 - 2*(rotation[1]*rotation[1]+rotation[2]*rotation[2])) * scale[0], X01: 2 * (rotation[0]*rotation[1] - rotation[3]*rotation[2]) * scale[1], X02: 2 * (rotation[0]*rotation[2] + rotation[3]*rotation[1]) * scale[2], X03: translation[0],
+		X10: 2 * (rotation[0]*rotation[1] + rotation[3]*rotation[2]) * scale[0], X11: (1 - 2*(rotation[0]*rotation[0]+rotation[2]*rotation[2])) * scale[1], X12: 2 * (rotation[1]*rotation[2] - rotation[3]*rotation[0]) * scale[2], X13: translation[1],
+		X20: 2 * (rotation[0]*rotation[2] - rotation[3]*rotation[1]) * scale[0], X21: 2 * (rotation[1]*rotation[2] + rotation[3]*rotation[0]) * scale[1], X22: (1 - 2*(rotation[0]*rotation[0]+rotation[1]*rotation[1])) * scale[2], X23: translation[2],
+		X30: 0, X31: 0, X32: 0, X33: 1,
+	}
 }
