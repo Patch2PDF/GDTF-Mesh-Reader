@@ -38,7 +38,6 @@ func LoadGLTF(file io.Reader, desiredSize *Types.Vector) (*Types.Mesh, error) {
 		}
 	}
 
-	// TODO: refine this as pure rotation breaks bounding box -> possibly rotate all 8 outer points of bounding box and redetermine
 	// calculate outer dimensions
 	min := Types.Vector{X: math.Inf(1), Y: math.Inf(1), Z: math.Inf(1)}
 	max := Types.Vector{X: math.Inf(-1), Y: math.Inf(-1), Z: math.Inf(-1)}
@@ -47,29 +46,38 @@ func LoadGLTF(file io.Reader, desiredSize *Types.Vector) (*Types.Mesh, error) {
 		for _, p := range m.Primitives {
 			// contains Min and Max attr (for dimension calc)
 			posAccessor := doc.Accessors[p.Attributes[gltf.POSITION]]
-			// do transformation before getting the outer dimensions
-			tempMin := transformationMatrices[node_index].MulPosition(Types.Vector{
+			tempMin := Types.Vector{
 				X: posAccessor.Min[0],
 				Y: posAccessor.Min[1],
 				Z: posAccessor.Min[2],
-			})
-			tempMax := transformationMatrices[node_index].MulPosition(Types.Vector{
+			}
+			tempMax := Types.Vector{
 				X: posAccessor.Max[0],
 				Y: posAccessor.Max[1],
 				Z: posAccessor.Max[2],
-			})
-			min = min.Min(tempMin)
-			max = max.Max(tempMax)
+			}
+			// determine all outer points as min/max might switch due to transformation
+			outer_points := [8]Types.Vector{
+				{X: tempMin.X, Y: tempMax.Y, Z: tempMax.Z}, // up front left
+				{X: tempMin.X, Y: tempMax.Y, Z: tempMin.Z}, // up back left
+				{X: tempMin.X, Y: tempMin.Y, Z: tempMax.Z}, // down front left
+				{X: tempMin.X, Y: tempMin.Y, Z: tempMin.Z}, // down back left
+				{X: tempMax.X, Y: tempMax.Y, Z: tempMax.Z}, // up front right
+				{X: tempMax.X, Y: tempMax.Y, Z: tempMin.Z}, // up back right
+				{X: tempMax.X, Y: tempMin.Y, Z: tempMax.Z}, // down front right
+				{X: tempMax.X, Y: tempMin.Y, Z: tempMin.Z}, // down back right
+			}
+			for _, vec := range outer_points {
+				vec = transformationMatrices[node_index].MulPosition(vec)
+				min = min.Min(vec)
+				max = max.Max(vec)
+			}
 		}
 	}
 
 	scaling := Types.Vector{X: 1, Y: 1, Z: 1}
 	if desiredSize != nil {
 		scaling = desiredSize.Div(max.Sub(min))
-		// following is a temporary fix, TODO: remove once bounding box is refined
-		scaling.X = math.Abs(scaling.X)
-		scaling.Y = math.Abs(scaling.Y)
-		scaling.Z = math.Abs(scaling.Z)
 	}
 
 	for _, node := range gltfNodes {
